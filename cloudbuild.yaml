@@ -1,14 +1,18 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build' , '-t' , 'gcr.io/test-395405/apache-webserver-image' , '.']
+  args: ['build' , '-t' , 'gcr.io/test-395405/apache-webserver-image:$COMMIT_ID' , '.']
 
   # Docker PUSH
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/test-395405/apache-webserver-image' ]
+  args: ['push', 'gcr.io/test-395405/apache-webserver-image:$COMMIT_ID' ]
 
 # # Deploy container image to Cloud Run
 # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
 #   entrypoint: gcloud
-#   args: ['run', 'deploy', 'web-server', '--image', 'gcr.io/test-395405/apache-webserver-image', '--region', 'asia-east1' , '--port' , '80' , '--allow-unauthenticated']
+#   args: ['run', 'deploy', 'web-server', '--image', 'gcr.io/test-395405/apache-webserver-image:$COMMIT_ID', '--region', 'asia-east1' , '--port' , '80' , '--allow-unauthenticated']
+
+substitutions:
+  _SHORT_SHA: 'git rev-parse --short HEAD'
+  COMMIT_ID: '$_SHORT_SHA'
 options:
   logging: CLOUD_LOGGING_ONLY
